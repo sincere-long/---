@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋</title>
+    <style>
+        #mycanvas {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid black;
+            box-shadow: 5px 5px 5px #B9B9B9, -2PX -2PX 2px #EFEFEF;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 40px;
+        }
+
+        #rerset {
+            width: 120px;
+            height: 50px;
+            display: block;
+            margin: 40px auto;
+            background-color: gray;
+
+        }
+    </style>
+</head>
+
+<body>
+    <h3 class="title">五子棋</h3>
+    <canvas id="mycanvas" height="450px" width="450px"></canvas>
+    <button type="reset" id="rerset">重置</button>
+    <script>
+        var canvas = document.getElementById("mycanvas");
+        var btn = document.getElementById("rerset");
+        var context = canvas.getContext("2d");
+        function checkBoard() {
+            for (var i = 1; i < 15; i++) {
+                context.beginPath();
+                context.moveTo(30 * i, 0);
+                context.lineTo(i * 30, canvas.height);
+                context.stroke();
+            }
+            for (var i = 1; i < 15; i++) {
+                context.beginPath();
+                context.moveTo(0, 30 * i);
+                context.lineTo(canvas.width, 30 * i);
+                context.stroke();
+            }
+        }
+        checkBoard();
+
+        //定义二维数组标记每个位置是否落子
+        var chessBoard = [];
+        for (var i = 1; i < 15; i++) {
+            chessBoard[i] = [];
+            for (var j = 1; j < 15; j++) {
+                chessBoard[i][j] = 0;
+            }
+        }
+
+
+        var me = 1;
+        canvas.addEventListener("click", function (e) {//鼠标响应的监听
+            var x = Math.round(e.offsetX / 30) * 30;
+            var y = Math.round(e.offsetY / 30) * 30;
+            if (chessBoard[x / 30][y / 30] == 0) {
+                if (me % 2 == 1) {//判断变量的值是否为奇数
+                    //绘制黑色棋子
+                    context.beginPath();
+                    context.arc(x, y, 15, 0, 2 * Math.PI);
+                    context.stroke();
+                    context.fillStyle = "black";
+                    context.fill();
+                    me++;
+                    chessBoard[x / 30][y / 30] = 1;
+                }//如果为奇数，下黑棋
+                else {
+                    //绘制白色棋子
+                    context.beginPath();
+                    context.arc(x, y, 15, 0, 2 * Math.PI);
+                    context.stroke();
+                    context.fillStyle = "white";
+                    context.fill();
+                    me++;
+                    chessBoard[x / 30][y / 30] = 2;
+                    window.alt
+                }//否则下白棋
+            }
+
+
+
+            for (var i = 1; i < 11; i++) {
+                var count = 0;
+                for (var j = 0; j < 5; j++) {
+                    if (chessBoard[i + j][y / 30] == 1) {
+                        count++;
+                    }
+                }
+                if (count == 5) {
+                    alert("黑棋获胜");
+                    setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+
+
+                }
+            }
+            //纵向
+            //[1,1][1,2][1,3][1,4][1,5]-->[1,10][1,11][1,12][1,13][1,14]
+            //横坐标不变：x/30
+            //纵坐标：1-10
+            //五个字连：重新定义一个变量来进行控制：0-4
+            for (var i = 1; i < 11; i++) {
+                var count = 0;
+                for (var j = 0; j < 5; j++) {
+                    if (chessBoard[x / 30][i + j] == 1) {
+                        count++;
+                    }
+                }
+                if (count == 5) {
+                    alert("黑棋获胜");
+                    setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                }
+            }
+            //右斜线
+            //[10,1][11,2][12,3][13,4][14,5]-->[1,10][2,11][3,12][4,13][5,14]
+            //用两个变量分别控制横纵坐标：i控制横，j控制纵
+            //i:10-1    j:1-10
+            //五个子连：新的变量：k:0-4
+            for (var i = 10; i > 0; i--) {
+                for (var j = 1; j < 11; j++) {
+                    var count = 0;
+                    for (var k = 0; k < 5; k++) {
+                        if (chessBoard[i + k][j + k] == 1) {
+                            count++;
+                        }
+                    }
+                    if (count == 5) {
+                        alert("黑棋获胜");
+                        setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                    }
+                }
+            }
+            //左斜线
+            //[1,5][2,4][3,3][4,2][5,1]-->[10,10][11,9][12,8][13,7][14,6]
+            //用两个变量分别控制横纵坐标：i控制横，j控制纵
+            //i:1-10  j:5-10
+            //五个子连：新的变量：k:0-4
+            for (var i = 1; i < 11; i++) {
+                for (var j = 5; j < 11; j++) {
+                    var count = 0;
+                    for (var k = 0; k < 5; k++) {
+                        if (chessBoard[i + k][j - k] == 1) {
+                            count++;
+                        }
+                    }
+                    if (count == 5) {
+                        alert("黑棋获胜");
+                        setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+
+                    }
+                }
+            }
+
+
+
+
+            for (var i = 1; i < 11; i++) {
+                var count = 0;
+                for (var j = 0; j < 5; j++) {
+                    if (chessBoard[i + j][y / 30] == 2) {
+                        count++;
+                    }
+                }
+                if (count == 5) {
+                    alert("白棋获胜");
+                    setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                }
+            }
+            //纵向
+            //[1,1][1,2][1,3][1,4][1,5]-->[1,10][1,11][1,12][1,13][1,14]
+            //横坐标不变：x/30
+            //纵坐标：1-10
+            //五个字连：重新定义一个变量来进行控制：0-4
+            for (var i = 1; i < 11; i++) {
+                var count = 0;
+                for (var j = 0; j < 5; j++) {
+                    if (chessBoard[x / 30][i + j] == 2) {
+                        count++;
+                    }
+                }
+                if (count == 5) {
+                    alert("白棋获胜");
+                    setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                }
+            }
+            //右斜线
+            //[10,1][11,2][12,3][13,4][14,5]-->[1,10][2,11][3,12][4,13][5,14]
+            //用两个变量分别控制横纵坐标：i控制横，j控制纵
+            //i:10-1    j:1-10
+            //五个子连：新的变量：k:0-4
+            for (var i = 10; i > 0; i--) {
+                for (var j = 1; j < 11; j++) {
+                    var count = 0;
+                    for (var k = 0; k < 5; k++) {
+                        if (chessBoard[i + k][j + k] == 2) {
+                            count++;
+                        }
+                    }
+                    if (count == 5) {
+                        alert("白棋获胜");
+                        setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                    }
+                }
+            }
+            //左斜线
+            //[1,5][2,4][3,3][4,2][5,1]-->[10,10][11,9][12,8][13,7][14,6]
+            //用两个变量分别控制横纵坐标：i控制横，j控制纵
+            //i:1-10  j:5-10
+            //五个子连：新的变量：k:0-4
+            for (var i = 1; i < 11; i++) {
+                for (var j = 5; j < 11; j++) {
+                    var count = 0;
+                    for (var k = 0; k < 5; k++) {
+                        if (chessBoard[i + k][j - k] == 2) {
+                            count++;
+                        }
+                    }
+                    if (count == 5) {
+                        alert("白棋获胜");
+                        setTimeout(function () { page(); }, 1000);  //5秒后将会调用执行remind()函数
+
+                    }
+                }
+            }
+        })
+
+        //重置画布
+        function replacement() {
+            btn.addEventListener("click", function () {
+                page();
+            })
+
+        }
+
+
+
+
+        function page() {
+            context.clearRect(0, 0, canvas.height, canvas.width);
+            canvas.addEventListener('wheel', (e) => {
+                this.setState({ tipNode: null });
+            })
+
+            checkBoard();
+
+            for (var i = 1; i < 15; i++) {
+                chessBoard[i] = [];
+                for (var j = 1; j < 15; j++) {
+                    chessBoard[i][j] = 0;
+                }
+            }
+            me = 1;
+        }
+
+        replacement();
+
+
+    </script>
+
+</body>
+
+</html>
